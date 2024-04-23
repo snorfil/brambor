@@ -1,0 +1,46 @@
+docker exec -it <nombre_contenedor_hadoop> bash -c "hadoop fs -put /path/local/[vuestro_nombre_apellidos]/data.csv /user/hadoop/[vuestro_nombre_apellidos]/input/"
+
+
+Ejecución de Hadoop en Docker
+Para llevar a cabo las tareas de MapReduce y Pig en un entorno de Docker donde ya tienes una instancia de Hadoop levantada, debes seguir estos pasos generales. Estos incluyen la carga del archivo CSV al Hadoop Distributed File System (HDFS), la ejecución de los scripts de MapReduce y Pig, y la verificación de los resultados.
+
+Paso 1: Subir el archivo CSV a HDFS
+
+Antes de ejecutar cualquier tarea de MapReduce o Pig, necesitas asegurarte de que el archivo CSV esté en HDFS. Aquí está el comando básico para poner un archivo en HDFS desde tu contenedor Docker:
+
+bash
+Copy code
+docker exec -it <nombre_contenedor_hadoop> bash -c "hadoop fs -put /path/local/[vuestro_nombre_apellidos]/data.csv /user/hadoop/[vuestro_nombre_apellidos]/input/"
+Asegúrate de reemplazar <nombre_contenedor_hadoop> con el nombre real de tu contenedor de Hadoop, y ajusta las rutas de archivo según corresponda.
+
+Paso 2: Ejecutar el trabajo de MapReduce
+
+Una vez que el archivo está en HDFS, puedes proceder a ejecutar tu trabajo de MapReduce. Si has compilado tu archivo Java en un archivo JAR (como en el ejemplo TotalSpentByUser.jar), puedes ejecutar el trabajo con el siguiente comando:
+
+bash
+Copy code
+docker exec -it <nombre_contenedor_hadoop> bash -c "hadoop jar /path/local/TotalSpentByUser.jar [vuestro_nombre_apellidos]/input/data.csv [vuestro_nombre_apellidos]/output"
+Este comando también asume que estás dentro del contenedor de Docker y que el archivo JAR se ha copiado a una ubicación accesible dentro del contenedor.
+
+Paso 3: Ejecutar el script de Pig
+
+Para ejecutar el script de Pig, primero debes asegurarte de que el script Pig (max_spent_by_country.pig) está en una ubicación accesible dentro de tu contenedor de Docker. Luego, puedes ejecutarlo con el siguiente comando:
+
+bash
+Copy code
+docker exec -it <nombre_contenedor_hadoop> bash -c "pig -f /path/local/max_spent_by_country.pig"
+Este comando ejecutará el script de Pig en el modo de ejecución por defecto (mapreduce), procesando los datos según las transformaciones definidas en el script.
+
+Paso 4: Verificar los resultados
+
+Después de ejecutar tus trabajos de MapReduce y Pig, puedes querer verificar los resultados. Para ver los archivos de salida en HDFS, puedes usar:
+
+bash
+Copy code
+docker exec -it <nombre_contenedor_hadoop> bash -c "hadoop fs -ls /user/hadoop/[vuestro_nombre_apellidos]/output"
+Para ver el contenido de un archivo de salida específico:
+
+bash
+Copy code
+docker exec -it <nombre_contenedor_hadoop> bash -c "hadoop fs -cat /user/hadoop/[vuestro_nombre_apellidos]/output/part-r-00000"
+Estos comandos te permitirán interactuar con HDFS dentro de tu contenedor de Docker y verificar que tus trabajos de MapReduce y Pig se han ejecutado correctamente y que los datos de salida son los esperados.
